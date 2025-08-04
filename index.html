@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Semiparametric Models: An Overview and Case Study</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+
+        .parent {
+            width: 100px;
+        }
+        .container {
+            display: block;
+            width: 100%;
+            height: auto;
+            position: relative;
+            overflow: hidden;
+            padding: 34.37% 0 0 0; /* 34.37% = 100 / (w / h) = 100 / (640 / 220) */
+            }
+        .container img {
+            display: block;
+            max-width: 100%;
+            max-height: 100%;
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8;
+        }
+        .slide {
+            display: none;
+            min-height: 100vh;
+            padding: 2rem;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+            border-left: 8px solid #2563eb;
+        }
+        .slide.active {
+            display: flex;
+            opacity: 1;
+        }
+        .nav-button {
+            position: fixed;
+            bottom: 2rem;
+            background-color: #2563eb;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 9999px;
+            cursor: pointer;
+            box-shadow: 0 4px 14px 0 rgba(0, 118, 255, 0.39);
+            transition: all 0.3s;
+        }
+        .nav-button:hover {
+            background-color: #1d4ed8;
+            box-shadow: 0 6px 20px 0 rgba(0, 118, 255, 0.23);
+        }
+        #prevBtn {
+            left: 2rem;
+        }
+        #nextBtn {
+            right: 2rem;
+        }
+        #slideCounter {
+            position: fixed;
+            bottom: 2.5rem;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 1rem;
+            font-size: 0.875rem;
+        }
+        .content-card {
+            background-color: white;
+            border-radius: 1rem;
+            padding: 2.5rem;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            width: 100%;
+            max-width: 1000px;
+            margin: auto;
+        }
+        h1, h2 {
+            color: #1e3a8a;
+        }
+        ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        li {
+            position: relative;
+            padding-left: 1.75rem;
+            margin-bottom: 1rem;
+        }
+        li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #2563eb;
+            font-weight: bold;
+        }
+        .formula {
+            background-color: #eef2ff;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            font-family: 'Courier New', Courier, monospace;
+            color: #312e81;
+            margin: 1.5rem 0;
+            text-align: center;
+            font-size: 1.1rem;
+            overflow-x: auto;
+        }
+        .highlight {
+            color: #1d4ed8;
+            font-weight: 500;
+        }
+        .img-container {
+            text-align: center;
+            margin: 1.5rem 0;
+        }
+        .img-container img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+    </style>
+</head>
+<body class="text-gray-800">
+
+    <!-- Slide 1: Title -->
+    <div id="slide1" class="slide active flex-col justify-center items-center text-center">
+        <div class="content-card">
+            <h1 class="text-5xl font-bold mb-4">Semiparametric Models</h1>
+            <p class="text-2xl text-gray-600 mb-8">An Overview and a Case Study on COVID-19 & Mobility</p>
+            <p class="text-xl font-medium">A Presentation for the NOAA GML OZWV</p>
+            <p class="text-xl font-medium"> <a href="https://ibarraespinosa.github.io">Sergio Ibarra-Espinosa</a></p>
+            <p class="text-lg text-gray-500 mt-2"> </a>1 Cooperative Institute for Research in Environmental Sciences, University of Colorado-Boulder</p>
+            <p class="text-lg text-gray-500 mt-2"> </a>2 NOAA Global Monitoring Laboratory</p>
+            <p class="text-lg text-gray-500 mt-2">August 4, 2025</p>
+        </div>
+    </div>
+
+    <!-- Slide 2: Introduction -->
+    <div id="slide2" class="slide flex-col justify-center">
+        <div class="content-card">
+            <h2 class="text-4xl font-bold mb-6">What are Semiparametric Models?</h2>
+            <p class="text-xl mb-6">Semiparametric models offer a powerful middle ground between the rigidity of fully parametric models and nature of nonparametric models.</p>
+            <ul>
+                <li><strong>The Best of Both Worlds:</strong> They combine a <span class="highlight">parametric component</span> (for variables whose effects we understand well) with a <span class="highlight">nonparametric component</span> (for variables with complex, unknown relationships).</li>
+                <li><strong>Flexibility + Interpretability:</strong> This structure allows us to flexibly model complex confounding effects while still getting clear, interpretable results for our primary variables of interest.</li>
+                <li><strong>Ideal for Environmental Science:</strong> They are perfectly suited for studies where we want to isolate a specific environmental effect from a background of complex, non-linear confounders like weather and seasonality.</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Slide 3: Motivation -->
+    <div id="slide3" class="slide flex-col justify-center">
+        <div class="content-card">
+            <h2 class="text-4xl font-bold mb-6">The Initial Spark: ENSO and Ozone</h2>
+            <p class="text-xl mb-6">The idea for this talk originated from a classic environmental health problem: isolating the effect of the El Niño-Southern Oscillation (ENSO) on ozone (O₃) concentrations.</p>
+            <ul>
+                <li><strong>The Question:</strong> How does the ENSO temperature anomaly over the ocean affect O₃ levels over the US?</li>
+                <li><strong>The Challenge:</strong> The relationship is clouded by many <span class="highlight">confounding factors</span> like local temperature, humidity, and long-term seasonal trends. These factors don't have simple, linear effects on ozone.</li>
+                <li><strong>The Semiparametric Solution:</strong> We can use a model that treats the ENSO anomaly as a simple, linear (parametric) term, while using flexible, smooth functions (nonparametric) to control for all the complex confounders. This allows us to precisely estimate ENSO's effect.</li>
+            </ul>
+        </div>
+    </div>
+    
+    <!-- Slide 4: GAMs -->
+    <div id="slide4" class="slide flex-col justify-center">
+        <div class="content-card">
+            <h2 class="text-4xl font-bold mb-6">A Closer Look: Generalized Additive Models (GAMs)</h2>
+            <p class="text-xl mb-6">A very common and powerful type of semiparametric model used in time-series analysis is the Generalized Additive Model (GAM).</p>
+            <p>The basic structure of a GAM looks like this:</p>
+            <div class="formula">
+                log(E[Yₜ]) = β₀ + <span class="text-red-600 font-bold">β₁Xₜ</span> + <span class="text-blue-600 font-bold">s(time)</span> + <span class="text-blue-600 font-bold">s(temperature)</span> + ...
+            </div>
+            <ul>
+                <li><span class="text-red-600 font-bold">Parametric Part (β₁Xₜ):</span> This is our variable of primary interest (e.g., ENSO, mobility, or a pollutant). The coefficient <span class="highlight">β₁</span> gives us a single, easy-to-interpret number representing the effect.</li>
+                <li><span class="text-blue-600 font-bold">Nonparametric Part (s(...)):</span> These are the <span class="highlight">smooth functions</span> (often splines) of our confounding variables. They can bend and curve to capture any complex, non-linear pattern without us having to specify its exact shape beforehand.</li>
+            </ul>
+            <p class="mt-4 text-gray-600">As the work by Dominici et al. has shown, a key challenge is choosing the right amount of "smoothness" (degrees of freedom) for the nonparametric parts to avoid bias and correctly estimate uncertainty.</p>
+        </div>
+    </div>
+
+    <!-- Slide 5: Case Study Intro -->
+    <div id="slide5" class="slide flex-col justify-center">
+        <div class="content-card">
+            <h2 class="text-4xl font-bold mb-6">Case Study: COVID-19 & Mobility in São Paulo</h2>
+            <p class="text-xl mb-6">Now, let's apply these concepts to a real-world public health crisis. Using the framework of GAMs, we investigated the impact of human mobility on the spread of COVID-19.</p>
+            <ul>
+                <li><strong>Research Question:</strong> What was the quantitative association between population mobility and the daily number of COVID-19 cases and deaths in São Paulo, Brazil?</li>
+                <li><strong>Why a GAM?</strong> This is a perfect use-case. We want a clear, interpretable effect for our main predictor (<span class="highlight">mobility</span>), but we need to control for a host of complex, interacting factors like air pollution, weather, and time trends that influence viral transmission.</li>
+            </ul>
+                <video src="https://i.imgur.com/wmUW5FJ.mp4" alt="São Paulo Cityscape" controls>
+        </div>
+    </div>
+
+    <!-- Slide 6: data -->
+    <div id="slide6" class="slide flex-col justify-center">
+        <div class="content-card">
+            <h2 class="text-4xl font-bold mb-6">Environenmental data São Paulo</h2>
+            <div class="img-container">
+                <img src="https://gitlab.com/ibarraespinosa/covid191/-/raw/master/figs/f3.png?ref_type=heads" alt="São Paulo Cityscape">
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 7: RMI -->
+    <div id="slide7" class="slide flex-col justify-center">
+        <div class="content-card">
+            <h2 class="text-4xl font-bold mb-6">Mobility data São Paulo</h2>
+            <div class="img-container">
+                <img src="https://gitlab.com/ibarraespinosa/covid191/-/raw/master/figs/rmiall.png?ref_type=heads" alt="São Paulo Cityscape">
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Slide 8: The Model & Data -->
+    <div id="slide8" class="slide flex-col justify-center">
+        <div class="content-card">
+            <h2 class="text-4xl font-bold mb-6">Our Approach: Modeling the Pandemic</h2>
+            <p class="text-xl mb-6">We applied a semiparametric GAM to isolate the effect of mobility, based on the model from <a href="https://www.sciencedirect.com/science/article/pii/S0013935121016704?via%3Dihub">Ibarra-Espinosa et al. (2022)</a> <a href="https://ibarraespinosa.github.io/blog/sao_paulo_covid.html">(PODCAST)</a></p>
+            <div class="formula">
+                log(COVID_Count) = β₀ + <span class="text-red-600 font-bold">β₁∙RMI</span> + <span class="text-blue-600 font-bold">s(PM₂.₅) + s(O₃) + s(Temp) + s(Humidity) + s(Time)</span>
+            </div>
+            <ul>
+                <li><strong>Outcome:</strong> Daily COVID-19 cases or deaths.</li>
+                <li><strong>Parametric Predictor:</strong> The <span class="highlight">Residential Mobility Index (RMI)</span>. A higher RMI means more people are staying home (i.e., higher social isolation).</li>
+                <li><strong>Nonparametric Confounders:</strong> Smooth functions were used to control for air pollutants (PM₂.₅, O₃), weather (temperature, humidity), day-of-week effects, and underlying time trends of the pandemic.</li>
+                <li>We tested:<strong> 1296 </strong>regressions. Code here https://gitlab.com/ibarraespinosa/covid191.</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Slide 9: Key Findings 1 -->
+    <div id="slide9" class="slide flex-col justify-center">
+        <div class="content-card">
+            <h2 class="text-4xl font-bold mb-6">Results: Did Staying Home Make a Difference?</h2>
+            <div class="container-container">
+                 <img width="720" height="1280" src="https://gitlab.com/ibarraespinosa/covid191/-/raw/master/figs/beta1g.png?ref_type=heads" alt="Exposure-response curve for COVID-19 cases vs. mobility">
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Slide 10: Key Findings 1 -->
+    <div id="slide10" class="slide flex-col justify-center">
+        <div class="content-card">
+            <h2 class="text-4xl font-bold mb-6">Results: Did Staying Home Make a Difference?</h2>
+            <p class="text-xl mb-6">The model revealed a clear and significant exposure-response relationship. (Based on Figure 5, Ibarra-Espinosa et al., 2022)</p>
+            <ul>
+                <li><strong>A Clear Inverse Relationship:</strong> As the Residential Mobility Index (RMI) <span class="highlight">increased</span> (more people at home), the expected number of COVID-19 cases and deaths <span class="highlight">decreased</span> significantly.</li>
+                <li><strong>Quantifying the Impact:</strong> At the median RMI of 45.28%, the model predicted 1,212 cases and 44 deaths per day.</li>
+                <li><strong>A Powerful Policy Lever:</strong> A modest increase in isolation from 45.28% to 50% was projected to <span class="highlight">avoid 438 cases and 21 deaths per day</span>. This provides a quantifiable target for public health interventions.</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Slide 11: Key Findings 1 -->
+    <div id="slide11" class="slide flex-col justify-center">
+        <div class="content-card">
+            <h2 class="text-4xl font-bold mb-6">Results: Did Staying Home Make a Difference?</h2>
+            <div class="img-container">
+                 <img src="https://gitlab.com/ibarraespinosa/covid191/-/raw/master/figs/COVID19_final.png?ref_type=heads" alt="Exposure-response curve for COVID-19 cases vs. mobility">
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 12: Key Findings 2 -->
+    <div id="slide12" class="slide flex-col justify-center">
+        <div class="content-card">
+            <h2 class="text-4xl font-bold mb-6">Results: The Hidden Risk of Air Pollution</h2>
+             <p class="text-xl mb-6">The GAM also allowed us to quantify the independent effects of environmental factors, revealing a dangerous synergy.</p>
+            <ul>
+                <li><strong>Particulate Matter (PM₂.₅):</strong> A 10 μg/m³ increase in PM₂.₅ was associated with a <span class="highlight">14.0% increase in COVID-19 cases</span> and an <span class="highlight">8.6% increase in deaths</span>.</li>
+                <li><strong>Ozone (O₃):</strong> A 10 μg/m³ increase in O₃ was associated with a <span class="highlight">7.5% increase in cases</span> and a <span class="highlight">6.3% increase in deaths</span>.</li>
+                <li><strong>A Compounding Threat:</strong> This shows that poor air quality likely increased susceptibility to and severity of COVID-19, highlighting the interconnectedness of environmental health and infectious disease.</li>
+            </ul>
+        </div>
+    </div>
+
+
+    <!-- Slide 13: Key Findings 1 -->
+    <div id="slide13" class="slide flex-col justify-center">
+        <div class="content-card">
+            <h2 class="text-4xl font-bold mb-6">Results: The Hidden Risk of Air Pollution</h2>
+            <div class="img-container">
+                 <img src="https://gitlab.com/ibarraespinosa/covid191/-/raw/master/figs/betapol.png?ref_type=heads" alt="Exposure-response curve for COVID-19 cases vs. mobility">
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Slide 14: Implications -->
+    <div id="slide14" class="slide flex-col justify-center">
+        <div class="content-card">
+            <h2 class="text-4xl font-bold mb-6">What Does This Mean for Public Health & Policy?</h2>
+            <p class="text-xl mb-6">The results from this semiparametric approach provide actionable insights.</p>
+            <ul>
+                <li><strong>Evidence-Based Policy:</strong> Mobility indices, analyzed with these models, are not just descriptive but can be used as <span class="highlight">quantitative tools</span> to manage public health responses and forecast healthcare needs.</li>
+                <li><strong>Setting Concrete Goals:</strong> Instead of abstract goals like "increase social distancing," policymakers can set specific RMI targets based on their health system's capacity, informed by the model's predictions.</li>
+                <li><strong>Holistic View of Health:</strong> The study underscores that environmental factors like air quality are not separate from infectious disease dynamics. Policies aimed at reducing air pollution can build resilience against future respiratory pandemics.</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Slide 15: Conclusion -->
+    <div id="slide15" class="slide flex-col justify-center">
+        <div class="content-card">
+            <h2 class="text-4xl font-bold mb-6">Conclusion</h2>
+            <p class="text-xl mb-6">Semiparametric models, particularly GAMs, are indispensable tools for modern environmental health and atmospheric science.</p>
+            <ul>
+                <li>They allow us to <span class="highlight">disentangle complex signals</span>, flexibly controlling for confounders to isolate a specific effect of interest.</li>
+                <li>The COVID-19 case study demonstrates their power: we quantified the precise public health benefits of social distancing and the compounding risk from air pollution.</li>
+                <li>By providing a robust framework to analyze time-series data, these models empower us to turn observational data into <span class="highlight">clear, defensible, and actionable scientific evidence</span> for policy.</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Slide 16: Gasparrini -->
+    <div id="slide16" class="slide flex-col justify-center">
+        <div class="content-card">
+            <h2 class="text-4xl font-bold mb-6">Other approaches</h2>
+            <div class="img-container">
+                 <img src="https://i.imgur.com/nTKh94h.png" alt="Mortality risk attributable to high and low ambient temperature: a multicountry observational study">
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 17: Gasparrini -->
+    <div id="slide17" class="slide flex-col justify-center">
+        <div class="content-card">
+            <h2 class="text-4xl font-bold mb-6">Other approaches</h2>
+            <div class="img-container">
+                 <img src="https://www.thelancet.com/cms/10.1016/S0140-6736(14)62114-0/asset/fca57645-788e-49e7-8259-f13be9093d8b/main.assets/gr1_lrg.jpg" alt="Mortality risk attributable to high and low ambient temperature: a multicountry observational study">
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Slide 18: References -->
+    <div id="slide18" class="slide flex-col justify-center">
+        <div class="content-card">
+            <h2 class="text-4xl font-bold mb-6">References</h2>
+            <ul>
+                <li>Ibarra-Espinosa, Sergio, et al. "Negative-Binomial and quasi-poisson regressions between COVID-19, mobility and environment in São Paulo, Brazil." Environmental research 204 (2022): 112369.</li>
+                <li>Dominici, Francesca, et al. "Fine particulate air pollution and hospital admission for cardiovascular and respiratory diseases." Jama 295.10 (2006): 1127-1134.</li>
+                <li>Dominici, Francesca, et al. "On the use of generalized additive models in time-series studies of air pollution and health." American journal of epidemiology 156.3 (2002): 193-203.</li>
+                <li>Gasparrini, Antonio, et al. "Mortality risk attributable to high and low ambient temperature: a multicountry observational study." The lancet 386.9991 (2015): 369-375.</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Slide 19: Q&A -->
+    <div id="slide19" class="slide flex-col justify-center items-center">
+        <h2 class="text-4xl font-bold mb-6">Gracias</h2>
+       <div class="content-card flex flex-col md:flex-row items-center justify-center md:space-x-8 space-y-8 md:space-y-0 text-center md:text-left">
+       <!-- Left side: Image -->
+            <div class="w-full md:w-1/2">
+                <img src="https://ibarraespinosa.github.io/2025CUAQB/figuras/me2.jpeg" alt="CARNAVAL" class="rounded-lg shadow-lg mx-auto">
+            </div>
+            <!-- Right side: Text -->
+            <div class="w-full md:w-1/2">
+                <img src="https://ibarraespinosa.github.io/2025CUAQB/figuras/qr.png" alt="QR" class="rounded-lg shadow-lg mx-auto">
+            </div>
+        </div>
+    </div>
+    <!-- Navigation -->
+    <button id="prevBtn" class="nav-button">Previous</button>
+    <button id="nextBtn" class="nav-button">Next</button>
+    <div id="slideCounter"></div>
+
+    <script>
+        let currentSlide = 1;
+        const totalSlides = document.querySelectorAll('.slide').length;
+
+        function showSlide(n) {
+            const slides = document.querySelectorAll('.slide');
+            slides.forEach(slide => slide.classList.remove('active'));
+            document.getElementById('slide' + n).classList.add('active');
+            
+            // Update counter
+            document.getElementById('slideCounter').textContent = `${n} / ${totalSlides}`;
+
+            // Handle button visibility
+            document.getElementById('prevBtn').style.display = (n === 1) ? 'none' : 'block';
+            document.getElementById('nextBtn').style.display = (n === totalSlides) ? 'none' : 'block';
+        }
+
+        function nextSlide() {
+            if (currentSlide < totalSlides) {
+                currentSlide++;
+                showSlide(currentSlide);
+            }
+        }
+
+        function prevSlide() {
+            if (currentSlide > 1) {
+                currentSlide--;
+                showSlide(currentSlide);
+            }
+        }
+
+        document.getElementById('nextBtn').addEventListener('click', nextSlide);
+        document.getElementById('prevBtn').addEventListener('click', prevSlide);
+        
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'ArrowRight') {
+                nextSlide();
+            } else if (event.key === 'ArrowLeft') {
+                prevSlide();
+            }
+        });
+
+        // Initial setup
+        showSlide(currentSlide);
+    </script>
+
+</body>
+</html>
